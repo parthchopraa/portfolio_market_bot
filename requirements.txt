@@ -1,0 +1,10 @@
+pandas
+numpy
+yfinance
+requests
+websocket-client
+streamlit
+plotly
+scikit-learn
+statsmodels
+scipy

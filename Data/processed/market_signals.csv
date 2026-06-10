@@ -1,0 +1,16 @@
+timestamp,asset,asset_type,close,signal_score,signal,confidence,confidence_level,reason
+2026-04-28,AAPL,Stock,270.7099914550781,6,BUY,0.75,High,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive; Low volatility improves confidence
+2026-04-28,AMZN,Stock,259.70001220703125,3,HOLD,0.38,Low,RSI indicates overbought condition; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive
+2026-05-06,BNB,Cryptocurrency,649.09,3,HOLD,0.38,Low,RSI is neutral; MACD is bullish; Short-term EMA is below long-term EMA; Price is above VWAP; Price is above upper Bollinger Band; 7-day momentum is positive; Low volatility improves confidence
+2026-05-06,BTC,Cryptocurrency,81665.84,5,BUY,0.62,Medium,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; Price is above upper Bollinger Band; 7-day momentum is positive; Low volatility improves confidence
+2026-05-06,ETH,Cryptocurrency,2357.44,1,HOLD,0.12,Low,RSI is neutral; MACD is bearish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive
+2026-04-28,GOOGL,Stock,349.7799987792969,3,HOLD,0.38,Low,RSI indicates overbought condition; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive
+2026-04-28,JPM,Stock,311.45001220703125,6,BUY,0.75,High,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive; Low volatility improves confidence
+2026-04-28,META,Stock,671.3400268554688,3,HOLD,0.38,Low,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is negative
+2026-04-28,MSFT,Stock,429.25,6,BUY,0.75,High,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive; Low volatility improves confidence
+2026-04-28,NVDA,Stock,213.1699981689453,3,HOLD,0.38,Low,RSI indicates overbought condition; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive
+2026-05-06,SOL,Cryptocurrency,89.2,2,HOLD,0.25,Low,RSI is neutral; MACD is bullish; Short-term EMA is below long-term EMA; Price is above VWAP; Price is above upper Bollinger Band; 7-day momentum is positive
+2026-04-28,SPY,Stock,711.6900024414062,6,BUY,0.75,High,RSI is neutral; MACD is bullish; Short-term EMA is above long-term EMA; Price is above VWAP; 7-day momentum is positive; Low volatility improves confidence
+2026-04-28,TSLA,Stock,376.0199890136719,-1,HOLD,0.12,Low,RSI is neutral; MACD is bullish; Short-term EMA is below long-term EMA; Price is below VWAP; 7-day momentum is negative
+2026-04-28,V,Stock,309.29998779296875,0,HOLD,0.0,Low,RSI is neutral; MACD is bullish; Short-term EMA is below long-term EMA; Price is below VWAP; 7-day momentum is negative; Low volatility improves confidence
+2026-05-06,XRP,Cryptocurrency,1.4305,4,BUY,0.5,Medium,RSI is neutral; MACD is bullish; Short-term EMA is below long-term EMA; Price is above VWAP; 7-day momentum is positive; Low volatility improves confidence
