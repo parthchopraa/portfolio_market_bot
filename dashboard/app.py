@@ -18,6 +18,12 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+if "theme_mode" not in st.session_state:
+    st.session_state["theme_mode"] = "Dark"
+
+theme_mode = st.session_state.get("theme_mode", "Dark")
+px.defaults.template = "plotly_white" if theme_mode == "Light" else "plotly_dark"
+
 # -----------------------------------------------------------------------------
 # Premium UI Styling
 # -----------------------------------------------------------------------------
@@ -27,7 +33,11 @@ st.markdown(
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap');
 
 [data-testid="collapsedControl"] {
-    display: none !important;
+    opacity: 0.55 !important;
+    transition: opacity 0.2s ease;
+}
+[data-testid="collapsedControl"]:hover {
+    opacity: 1 !important;
 }
 
 :root {
@@ -333,6 +343,81 @@ div[data-testid="stDataFrame"] {
     border: 1px solid rgba(255,255,255,0.05);
 }
 
+
+
+.nav-micro {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin: 16px 0 8px 2px;
+}
+.sidebar-status-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 0 16px 0;
+}
+.sidebar-status-card {
+    padding: 10px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-status-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+.sidebar-status-value {
+    font-size: 12px;
+    font-weight: 900;
+    color: var(--text);
+    margin-top: 2px;
+}
+.brand-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(240,185,11,0.5), transparent);
+    margin: 12px 0;
+}
+.brand-badge-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+.brand-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 800;
+    color: #070A0E;
+    background: var(--gold);
+    padding: 4px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.4px;
+}
+.sidebar-footer-card {
+    margin-top: 18px;
+    padding: 14px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(34,197,94,0.08), rgba(17,24,39,0.45));
+    border: 1px solid rgba(34,197,94,0.18);
+}
+.sidebar-footer-title {
+    color: var(--green);
+    font-weight: 900;
+    font-size: 12px;
+}
+.sidebar-footer-text {
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.45;
+    margin-top: 4px;
+}
+
 footer {visibility: hidden;}
 #MainMenu {visibility: hidden;}
 header {visibility: hidden;}
@@ -349,6 +434,73 @@ header {visibility: hidden;}
 """,
     unsafe_allow_html=True,
 )
+
+# -----------------------------------------------------------------------------
+# Theme-specific visual overrides
+# -----------------------------------------------------------------------------
+if theme_mode == "Light":
+    st.markdown(
+        """
+        <style>
+        :root {
+            --bg: #F4F7FB;
+            --panel: rgba(255,255,255,0.92);
+            --panel2: rgba(255,255,255,0.98);
+            --border: rgba(15,23,42,0.10);
+            --text: #0F172A;
+            --muted: #475569;
+            --gold-soft: rgba(240,185,11,0.18);
+        }
+        .stApp {
+            background:
+                radial-gradient(circle at 20% 0%, rgba(240,185,11,0.20), transparent 28%),
+                radial-gradient(circle at 85% 12%, rgba(34,197,94,0.12), transparent 28%),
+                linear-gradient(180deg, #F8FAFC 0%, #EEF2F7 100%);
+            color: var(--text);
+        }
+        section[data-testid="stSidebar"] {
+            background: linear-gradient(180deg, #FFFFFF 0%, #EEF2F7 100%) !important;
+            border-right: 1px solid rgba(15,23,42,0.12);
+        }
+        section[data-testid="stSidebar"] * { color: #0F172A !important; }
+        .brand-card {
+            background: linear-gradient(145deg, rgba(240,185,11,0.22), rgba(255,255,255,0.92)) !important;
+            border: 1px solid rgba(240,185,11,0.38) !important;
+            box-shadow: 0 18px 50px rgba(15,23,42,0.12) !important;
+        }
+        .brand-subtitle, .nav-micro, .executive-note, .subtitle, .ticker-symbol, .ticker-source { color: #475569 !important; }
+        .topbar, .hero, .ticker-card, div[data-testid="stMetric"], .insight-panel {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(241,245,249,0.92)) !important;
+            border: 1px solid rgba(15,23,42,0.10) !important;
+            box-shadow: 0 18px 45px rgba(15,23,42,0.10) !important;
+        }
+        div[data-testid="stMetricValue"], .main-title, .topbar-logo, .ticker-price, .section-header { color: #0F172A !important; }
+        [data-testid="stSidebar"] [role="radiogroup"] label {
+            background: rgba(15,23,42,0.035) !important;
+            border: 1px solid rgba(15,23,42,0.08) !important;
+        }
+        [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+            background: linear-gradient(135deg, rgba(240,185,11,0.28), rgba(255,255,255,0.90)) !important;
+            border-color: rgba(240,185,11,0.55) !important;
+            box-shadow: 0 10px 30px rgba(240,185,11,0.16) !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        [data-testid="stSidebar"] [role="radiogroup"] label:has(input:checked) {
+            background: linear-gradient(135deg, rgba(240,185,11,0.18), rgba(15,23,42,0.86)) !important;
+            border-color: rgba(240,185,11,0.42) !important;
+            box-shadow: 0 10px 30px rgba(240,185,11,0.12) !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 # -----------------------------------------------------------------------------
@@ -635,11 +787,38 @@ st.sidebar.markdown(
     """
     <div class="brand-card">
         <div class="brand-title"><span>Quant</span>Edge</div>
-        <div class="brand-subtitle">Real-time market intelligence, portfolio analytics, and decision-support terminal.</div>
+        <div class="brand-subtitle">Institutional-style market intelligence, portfolio analytics, and decision-support terminal.</div>
+        <div class="brand-divider"></div>
+        <div class="brand-badge-row">
+            <span class="brand-badge">LIVE</span>
+            <span class="brand-badge">AI SIGNALS</span>
+            <span class="brand-badge">RISK</span>
+        </div>
+    </div>
+    <div class="sidebar-status-grid">
+        <div class="sidebar-status-card">
+            <div class="sidebar-status-label">Engine</div>
+            <div class="sidebar-status-value">Online</div>
+        </div>
+        <div class="sidebar-status-card">
+            <div class="sidebar-status-label">Mode</div>
+            <div class="sidebar-status-value">Terminal</div>
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
 )
+
+st.sidebar.markdown('<div class="nav-micro">Appearance</div>', unsafe_allow_html=True)
+st.sidebar.radio(
+    "Theme",
+    ["Dark", "Light"],
+    horizontal=True,
+    key="theme_mode",
+    label_visibility="collapsed",
+)
+
+st.sidebar.markdown('<div class="nav-micro">Navigation</div>', unsafe_allow_html=True)
 
 page = st.sidebar.radio(
     "Navigation",
@@ -657,7 +836,15 @@ page = st.sidebar.radio(
 )
 
 st.sidebar.markdown("---")
-st.sidebar.caption("Capstone FinTech Analytics System")
+st.sidebar.markdown(
+    """
+    <div class="sidebar-footer-card">
+        <div class="sidebar-footer-title">Capstone FinTech System</div>
+        <div class="sidebar-footer-text">Built with live data, forecasting, portfolio optimization, backtesting, and unified intelligence.</div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 render_topbar()
 
