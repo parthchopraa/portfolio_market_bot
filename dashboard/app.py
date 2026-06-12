@@ -12,6 +12,57 @@ st.set_page_config(
 )
 
 # -----------------------------
+# Product UI Styling
+# -----------------------------
+st.markdown("""
+<style>
+    .stApp {
+        background-color: #0B0E11;
+        color: #EAECEF;
+    }
+
+    section[data-testid="stSidebar"] {
+        background-color: #111827;
+    }
+
+    .main-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #F0B90B;
+        margin-bottom: 5px;
+    }
+
+    .sub-title {
+        font-size: 16px;
+        color: #A1A1AA;
+        margin-bottom: 25px;
+    }
+
+    .section-header {
+        font-size: 24px;
+        font-weight: 800;
+        color: #F9FAFB;
+        margin-top: 25px;
+        margin-bottom: 15px;
+    }
+
+    div[data-testid="stMetric"] {
+        background: linear-gradient(145deg, #111827, #1F2937);
+        border: 1px solid #2D3748;
+        padding: 18px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+    }
+
+    div[data-testid="stDataFrame"] {
+        border-radius: 14px;
+        overflow: hidden;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+
+# -----------------------------
 # Helpers
 # -----------------------------
 def load_table(table_name):
@@ -19,6 +70,7 @@ def load_table(table_name):
     df = pd.read_sql_query(f"SELECT * FROM {table_name}", conn)
     conn.close()
     return df
+
 
 def load_live_data():
     conn = sqlite3.connect(LIVE_DB_PATH)
@@ -34,14 +86,17 @@ def load_live_data():
     conn.close()
     return df
 
+
 def safe_columns(df, columns):
     return [col for col in columns if col in df.columns]
+
 
 def get_asset_row(df, asset):
     rows = df[df["asset"] == asset]
     if rows.empty:
         return None
     return rows.iloc[0]
+
 
 # -----------------------------
 # Sidebar
@@ -51,26 +106,34 @@ st.sidebar.title("Market Intelligence Platform")
 page = st.sidebar.radio(
     "Navigation",
     [
-    "Overview",
-    "Live Market Feed",
-    "Asset Intelligence",
-    "Portfolio Manager",
-    "Market Intelligence",
-    "Portfolio Optimization",
-    "Correlation Analysis",
-    "Backtesting"
+        "Overview",
+        "Live Market Feed",
+        "Asset Intelligence",
+        "Portfolio Manager",
+        "Top Opportunities",
+        "Market Intelligence",
+        "Portfolio Optimization",
+        "Correlation Analysis",
+        "Backtesting"
     ]
 )
 
 st.sidebar.markdown("---")
 st.sidebar.caption("Capstone FinTech Analytics System")
 
+
 # -----------------------------
 # Overview
 # -----------------------------
 if page == "Overview":
-
-    st.title("Real-Time Market Intelligence Platform")
+    st.markdown(
+        '<div class="main-title">Market Intelligence Terminal</div>',
+        unsafe_allow_html=True
+    )
+    st.markdown(
+        '<div class="sub-title">Real-time portfolio analytics, signals, forecasting, optimization, and market intelligence.</div>',
+        unsafe_allow_html=True
+    )
 
     st.markdown("""
     This platform integrates historical data, live market streaming, technical indicators,
@@ -85,7 +148,10 @@ if page == "Overview":
     col1, col2, col3, col4 = st.columns(4)
 
     col1.metric("Assets Tracked", intelligence_df["asset"].nunique())
-    col2.metric("Buy Signals", int(intelligence_df["final_recommendation"].astype(str).str.contains("BUY").sum()))
+    col2.metric(
+        "Buy Signals",
+        int(intelligence_df["final_recommendation"].astype(str).str.contains("BUY").sum())
+    )
     col3.metric("High Risk Assets", int((risk_df["risk_category"] == "High Risk").sum()))
 
     best_portfolio = optimization_df.sort_values("sharpe_ratio", ascending=False).iloc[0]
@@ -121,11 +187,11 @@ if page == "Overview":
 
     st.plotly_chart(fig, use_container_width=True)
 
+
 # -----------------------------
 # Live Market Feed
 # -----------------------------
 elif page == "Live Market Feed":
-
     st.title("Live Market Feed")
 
     live_df = load_live_data()
@@ -179,11 +245,11 @@ elif page == "Live Market Feed":
             use_container_width=True
         )
 
+
 # -----------------------------
 # Asset Intelligence
 # -----------------------------
 elif page == "Asset Intelligence":
-
     st.title("Asset Intelligence Profile")
 
     intelligence_df = load_table("unified_market_intelligence")
@@ -243,8 +309,9 @@ elif page == "Asset Intelligence":
 
         with left:
             if forecast is not None:
+                forecast_one = pd.DataFrame([forecast])
                 st.dataframe(
-                    pd.DataFrame([forecast])[safe_columns(pd.DataFrame([forecast]), [
+                    forecast_one[safe_columns(forecast_one, [
                         "asset",
                         "latest_close",
                         "next_forecast_close",
@@ -257,8 +324,9 @@ elif page == "Asset Intelligence":
 
         with right:
             if risk is not None:
+                risk_one = pd.DataFrame([risk])
                 st.dataframe(
-                    pd.DataFrame([risk])[safe_columns(pd.DataFrame([risk]), [
+                    risk_one[safe_columns(risk_one, [
                         "asset",
                         "annual_return",
                         "annual_volatility",
@@ -273,8 +341,9 @@ elif page == "Asset Intelligence":
         st.subheader("Portfolio Allocation Role")
 
         if weights is not None:
+            weights_one = pd.DataFrame([weights])
             st.dataframe(
-                pd.DataFrame([weights])[safe_columns(pd.DataFrame([weights]), [
+                weights_one[safe_columns(weights_one, [
                     "asset",
                     "asset_type",
                     "max_sharpe_weight",
@@ -312,9 +381,11 @@ elif page == "Asset Intelligence":
             "vwap"
         ]
 
-        indicator_snapshot = pd.DataFrame([latest_row])[safe_columns(pd.DataFrame([latest_row]), indicator_cols)]
-
-        st.dataframe(indicator_snapshot, use_container_width=True)
+        indicator_snapshot = pd.DataFrame([latest_row])
+        st.dataframe(
+            indicator_snapshot[safe_columns(indicator_snapshot, indicator_cols)],
+            use_container_width=True
+        )
 
         fig_rsi = px.line(
             latest_tech.tail(250),
@@ -330,7 +401,6 @@ elif page == "Asset Intelligence":
 # Portfolio Manager
 # -----------------------------
 elif page == "Portfolio Manager":
-
     st.title("Portfolio Manager & Investment Simulator")
 
     st.markdown("""
@@ -391,10 +461,10 @@ elif page == "Portfolio Manager":
         on="asset",
         how="left"
     )
-           # -----------------------------
+
+    # -----------------------------
     # Portfolio Health Score v3 - Risk Profile Aware
     # -----------------------------
-
     avg_confidence = allocation_df["confidence_level"].map({
         "High": 1.0,
         "Medium": 0.75,
@@ -427,7 +497,6 @@ elif page == "Portfolio Manager":
     confidence_component = avg_confidence * 20
     diversification_component = diversification_score * 15
 
-    # Risk-profile-specific scoring
     if risk_profile == "Conservative":
         return_component = min(annual_return / 0.20, 1) * 15
         volatility_penalty = min(annual_volatility / 0.30, 1) * 20
@@ -442,7 +511,7 @@ elif page == "Portfolio Manager":
         moderate_risk_penalty = moderate_risk_exposure * 5
         risk_fit_bonus = (moderate_risk_exposure * 10) + (low_risk_exposure * 5)
 
-    else:  # Aggressive
+    else:
         return_component = min(annual_return / 0.40, 1) * 25
         volatility_penalty = min(annual_volatility / 0.70, 1) * 6
         high_risk_penalty = high_risk_exposure * 4
@@ -486,7 +555,6 @@ elif page == "Portfolio Manager":
 
     st.subheader("Portfolio Summary")
 
-
     col1, col2, col3, col4, col5 = st.columns(5)
 
     col1.metric("Portfolio Size", f"${portfolio_amount:,.2f}")
@@ -514,12 +582,12 @@ elif page == "Portfolio Manager":
         allocation_df[display_cols].sort_values("allocation_amount", ascending=False),
         use_container_width=True
     )
+
     st.subheader("Why These Assets Were Selected")
 
     explanation_rows = []
 
     for _, row in allocation_df.sort_values("allocation_amount", ascending=False).iterrows():
-
         reasons = []
 
         if "BUY" in str(row.get("final_recommendation", "")):
@@ -560,6 +628,7 @@ elif page == "Portfolio Manager":
         explanation_df,
         use_container_width=True
     )
+
     st.subheader("Allocation Chart")
 
     fig = px.pie(
@@ -588,6 +657,103 @@ elif page == "Portfolio Manager":
 
     st.plotly_chart(fig2, use_container_width=True)
 
+    # -----------------------------
+    # Scenario Simulator
+    # -----------------------------
+    st.subheader("Scenario Simulator")
+
+    sim_col1, sim_col2 = st.columns(2)
+
+    with sim_col1:
+        monthly_contribution = st.number_input(
+            "Monthly Contribution ($)",
+            min_value=0.0,
+            value=500.0,
+            step=100.0
+        )
+
+    with sim_col2:
+        investment_years = st.number_input(
+            "Investment Horizon (Years)",
+            min_value=1,
+            max_value=40,
+            value=10,
+            step=1
+        )
+
+    base_annual_return = selected_summary["expected_annual_return"]
+
+    bear_annual_return = base_annual_return * 0.45
+    bull_annual_return = base_annual_return * 1.35
+
+    months = int(investment_years * 12)
+
+    def simulate_growth(initial_amount, monthly_amount, annual_return, months):
+        monthly_return = (1 + annual_return) ** (1 / 12) - 1
+
+        values = []
+        portfolio_value = initial_amount
+
+        for month in range(1, months + 1):
+            portfolio_value = portfolio_value * (1 + monthly_return)
+            portfolio_value += monthly_amount
+
+            values.append({
+                "month": month,
+                "year": month / 12,
+                "portfolio_value": portfolio_value
+            })
+
+        return pd.DataFrame(values)
+
+    bear_df = simulate_growth(
+        portfolio_amount,
+        monthly_contribution,
+        bear_annual_return,
+        months
+    )
+    bear_df["scenario"] = "Bear Case"
+
+    base_df = simulate_growth(
+        portfolio_amount,
+        monthly_contribution,
+        base_annual_return,
+        months
+    )
+    base_df["scenario"] = "Base Case"
+
+    bull_df = simulate_growth(
+        portfolio_amount,
+        monthly_contribution,
+        bull_annual_return,
+        months
+    )
+    bull_df["scenario"] = "Bull Case"
+
+    scenario_df = pd.concat([bear_df, base_df, bull_df], ignore_index=True)
+
+    final_bear = bear_df["portfolio_value"].iloc[-1]
+    final_base = base_df["portfolio_value"].iloc[-1]
+    final_bull = bull_df["portfolio_value"].iloc[-1]
+
+    st.subheader("Projected Future Value")
+
+    sc1, sc2, sc3 = st.columns(3)
+
+    sc1.metric("Bear Case", f"${final_bear:,.2f}")
+    sc2.metric("Base Case", f"${final_base:,.2f}")
+    sc3.metric("Bull Case", f"${final_bull:,.2f}")
+
+    fig_sim = px.line(
+        scenario_df,
+        x="year",
+        y="portfolio_value",
+        color="scenario",
+        title="Portfolio Growth Scenario Projection"
+    )
+
+    st.plotly_chart(fig_sim, use_container_width=True)
+
     st.subheader("Decision Interpretation")
 
     if risk_profile == "Conservative":
@@ -606,11 +772,109 @@ elif page == "Portfolio Manager":
             "It may allocate more capital to higher-growth assets while accepting higher volatility."
         )
 
+
+# -----------------------------
+# Top Opportunities
+# -----------------------------
+elif page == "Top Opportunities":
+    st.title("Top Opportunities Engine")
+
+    st.markdown("""
+    Assets are ranked using the Unified Intelligence Engine,
+    combining technical indicators, forecasting, risk,
+    regime analysis, correlation intelligence, and backtesting.
+    """)
+
+    intelligence_df = load_table("unified_market_intelligence")
+
+    ranked_df = intelligence_df.copy()
+
+    recommendation_bonus = {
+        "CONSERVATIVE STRONG BUY": 4,
+        "MODERATE STRONG BUY": 3,
+        "SPECULATIVE BUY": 2,
+        "CAUTIOUS BUY": 1,
+        "NEUTRAL HOLD": 0,
+        "HIGH-RISK HOLD": -1,
+        "SELL / AVOID": -3
+    }
+
+    confidence_bonus = {
+        "High": 2,
+        "Medium": 1,
+        "Low": 0
+    }
+
+    ranked_df["opportunity_score"] = (
+        ranked_df["final_score"]
+        + ranked_df["final_recommendation"].map(recommendation_bonus).fillna(0)
+        + ranked_df["confidence_level"].map(confidence_bonus).fillna(0)
+    )
+
+    ranked_df = ranked_df.sort_values(
+        by="opportunity_score",
+        ascending=False
+    )
+
+    ranked_df["rank"] = range(1, len(ranked_df) + 1)
+
+    st.subheader("Top Ranked Opportunities")
+
+    display_cols = [
+        "rank",
+        "asset",
+        "asset_type",
+        "opportunity_score",
+        "final_recommendation",
+        "confidence_level",
+        "market_regime",
+        "risk_category"
+    ]
+
+    st.dataframe(
+        ranked_df[display_cols],
+        use_container_width=True
+    )
+
+    st.subheader("Top 10 Opportunity Scores")
+
+    fig = px.bar(
+        ranked_df.head(10),
+        x="asset",
+        y="opportunity_score",
+        color="risk_category",
+        text="opportunity_score",
+        title="Top Opportunity Rankings"
+    )
+
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.subheader("Best Opportunities Today")
+
+    top5 = ranked_df.head(5)
+
+    for _, row in top5.iterrows():
+        st.success(
+            f"""
+            Rank #{row['rank']} — {row['asset']}
+
+            Recommendation: {row['final_recommendation']}
+
+            Confidence: {row['confidence_level']}
+
+            Market Regime: {row['market_regime']}
+
+            Risk Category: {row['risk_category']}
+
+            Opportunity Score: {row['opportunity_score']:.2f}
+            """
+        )
+
+
 # -----------------------------
 # Market Intelligence
 # -----------------------------
 elif page == "Market Intelligence":
-
     st.title("Market Intelligence")
 
     intelligence_df = load_table("unified_market_intelligence")
@@ -671,11 +935,11 @@ elif page == "Market Intelligence":
 
         st.plotly_chart(fig2, use_container_width=True)
 
+
 # -----------------------------
 # Portfolio Optimization
 # -----------------------------
 elif page == "Portfolio Optimization":
-
     st.title("Portfolio Optimization")
 
     weights_df = load_table("optimized_portfolio_weights")
@@ -703,11 +967,11 @@ elif page == "Portfolio Optimization":
     st.subheader("Portfolio Weights")
     st.dataframe(weights_df, use_container_width=True)
 
+
 # -----------------------------
 # Correlation Analysis
 # -----------------------------
 elif page == "Correlation Analysis":
-
     st.title("Correlation Analysis")
 
     corr_df = load_table("correlation_matrix")
@@ -731,11 +995,11 @@ elif page == "Correlation Analysis":
     st.subheader("Diversification Insights")
     st.dataframe(insights_df, use_container_width=True)
 
+
 # -----------------------------
 # Backtesting
 # -----------------------------
 elif page == "Backtesting":
-
     st.title("Backtesting Results")
 
     summary_df = load_table("backtest_summary")
