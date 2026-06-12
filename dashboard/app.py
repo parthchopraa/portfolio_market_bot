@@ -33,8 +33,11 @@ st.markdown(
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@600;700;800&display=swap');
 
 [data-testid="collapsedControl"] {
-    opacity: 0.55 !important;
-    transition: opacity 0.2s ease;
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
 }
 [data-testid="collapsedControl"]:hover {
     opacity: 1 !important;
@@ -420,7 +423,21 @@ div[data-testid="stDataFrame"] {
 
 footer {visibility: hidden;}
 #MainMenu {visibility: hidden;}
-header {visibility: hidden;}
+header[data-testid="stHeader"] {
+    visibility: visible !important;
+    background: rgba(7,10,14,0.72) !important;
+    backdrop-filter: blur(14px) !important;
+}
+header[data-testid="stHeader"] * {
+    visibility: visible !important;
+}
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    z-index: 999999 !important;
+}
 
 @media (max-width: 1100px) {
     .executive-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
